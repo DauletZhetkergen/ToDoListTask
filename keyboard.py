@@ -1,7 +1,7 @@
 import sqlite3
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
+##Здесь все клавиатуры с main вызываются отсюда
 conn = sqlite3.Connection("store.db",check_same_thread=False)
 cursor = conn.cursor()
 

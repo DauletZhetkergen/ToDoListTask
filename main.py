@@ -1,3 +1,5 @@
+# Основной файл вся логика написана здесь
+
 import asyncio
 import configparser
 
@@ -15,9 +17,9 @@ config = configparser.ConfigParser()
 
 config.read("settings.ini")
 
-TOKEN = config["BASIC"]["TOKEN"]
+TOKEN = config["BASIC"]["TOKEN"] # Берем токен с файла settings.ini можете свою написать и работать со своим токеном
 
-conn = sqlite3.Connection("store.db",check_same_thread=False)
+conn = sqlite3.Connection("store.db",check_same_thread=False)# Подключение к БД
 cursor = conn.cursor()
 
 bot = Bot(TOKEN)
@@ -28,7 +30,7 @@ class Adder(StatesGroup):
     name = State()
 
 
-@dp.message_handler(commands=["start", "menu"], state='*')
+@dp.message_handler(commands=["start", "menu"], state='*')#Старт
 async def start(message: types.Message):
     await message.answer("Приветствую",reply_markup= await keyboard.start_key())
 
@@ -40,7 +42,7 @@ async def newTask(call: types.CallbackQuery):
 
 
 
-@dp.callback_query_handler(lambda message: message.data == "newTask")
+@dp.callback_query_handler(lambda message: message.data == "newTask")## Логика для добавления новой задачи
 async def newTask(call: types.CallbackQuery):
     await call.message.edit_text("Напишите задание")
     await Adder.name.set()
@@ -62,7 +64,9 @@ async def nameProduct(message: types.Message, state: FSMContext):
         await asyncio.sleep(0.3)
         await message.answer("Меню",reply_markup= await keyboard.start_key())
 
-@dp.callback_query_handler(lambda message: message.data == "finishTask")
+
+
+@dp.callback_query_handler(lambda message: message.data == "finishTask")## Логика для завершения задачи
 async def finishTask(call: types.CallbackQuery):
     await call.message.edit_text("Выберите задачу",reply_markup=await keyboard.showTasksToFinish())
 
@@ -77,14 +81,14 @@ async def finishTask2(call: types.CallbackQuery, state: FSMContext):
     await asyncio.sleep(1)
     await call.message.edit_text("Меню", reply_markup=await keyboard.start_key())
 
-@dp.callback_query_handler(lambda message: message.data == "listTask")
+@dp.callback_query_handler(lambda message: message.data == "listTask")## Логика для показа всех задач
 async def listTask(call: types.CallbackQuery):
     await call.message.edit_text("Список задач",reply_markup=await keyboard.showAllTasks())
 
 
 
 
-@dp.callback_query_handler(lambda message: message.data == "delTask")
+@dp.callback_query_handler(lambda message: message.data == "delTask")## Логика для удаления задачи
 async def deleteTask(call: types.CallbackQuery):
     await call.message.edit_text("Выберите задачу для удаления",reply_markup= await keyboard.deleteTask())
 
